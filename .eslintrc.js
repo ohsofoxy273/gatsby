@@ -48,8 +48,8 @@ module.exports = {
     "no-unused-vars": [
       "warn",
       {
-        varsIgnorePattern: "^_"
-      }
+        varsIgnorePattern: "^_",
+      },
     ],
     "consistent-return": ["error"],
     "filenames/match-regex": ["error", "^[a-z-\\d\\.]+$", true],
@@ -178,7 +178,7 @@ module.exports = {
   ],
   settings: {
     react: {
-      version: "16.4.2",
+      version: "16.9.0",
     },
   },
 }
