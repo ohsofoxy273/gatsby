@@ -179,6 +179,7 @@ jobs:
       - <<: *install_node_modules
       - <<: *persist_cache
       - run: yarn bootstrap -- concurrency=2
+      - run: git status yarn.lock -s | grep "M yarn.lock" && echo "yarn.lock is dirty. Please ensure changes have been committed" && exit 1
       # Persist the workspace again with all packages already built
       - persist_to_workspace:
           root: ./
@@ -221,6 +222,12 @@ jobs:
       image: "14"
     <<: *test_template
 
+  integration_tests_gatsby_source_wordpress:
+    executor: node
+    steps:
+      - e2e-test:
+          test_path: integration-tests/gatsby-source-wordpress
+
   integration_tests_long_term_caching:
     executor: node
     steps:
@@ -257,15 +264,6 @@ jobs:
     steps:
       - e2e-test:
           test_path: integration-tests/artifacts
-
-  # temporary
-  integration_tests_artifacts_conditional_page_builds:
-    executor: node
-    steps:
-      - e2e-test:
-          test_path: integration-tests/artifacts
-    environment:
-      GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES: 1
 
   integration_tests_ssr:
     executor: node
@@ -333,14 +331,6 @@ jobs:
 
   e2e_tests_development_runtime:
     <<: *e2e_tests_development_runtime_alias
-
-  e2e_tests_development_runtime_fast_refresh:
-    <<: *e2e_tests_development_runtime_alias
-    environment:
-      GATSBY_HOT_LOADER: fast-refresh
-      CYPRESS_HOT_LOADER: fast-refresh
-      CYPRESS_PROJECT_ID: 917bea
-      CYPRESS_RECORD_KEY: 4750fb36-4576-4638-a617-d243a381acef
 
   e2e_tests_development_runtime_with_experimental_react:
     <<: *e2e_tests_development_runtime_alias
@@ -596,6 +586,8 @@ workflows:
             - lint
             - typecheck
             - bootstrap
+      - integration_tests_gatsby_source_wordpress:
+          <<: *e2e-test-workflow
       - integration_tests_long_term_caching:
           <<: *e2e-test-workflow
       - integration_tests_cache_resilience:
@@ -605,8 +597,6 @@ workflows:
       - integration_tests_structured_logging:
           <<: *e2e-test-workflow
       - integration_tests_artifacts:
-          <<: *e2e-test-workflow
-      - integration_tests_artifacts_conditional_page_builds:
           <<: *e2e-test-workflow
       - integration_tests_ssr:
           <<: *e2e-test-workflow
@@ -626,8 +616,6 @@ workflows:
       - e2e_tests_visual-regression:
           <<: *e2e-test-workflow
       - e2e_tests_development_runtime:
-          <<: *e2e-test-workflow
-      - e2e_tests_development_runtime_fast_refresh:
           <<: *e2e-test-workflow
       - e2e_tests_production_runtime:
           <<: *e2e-test-workflow

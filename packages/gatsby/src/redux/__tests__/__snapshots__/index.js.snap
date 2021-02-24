@@ -19,10 +19,11 @@ Object {
       "/my-sweet-new-page/" => Object {
         "dirty": 2,
         "isDeleted": false,
-        "pageQueryHash": "",
+        "pageDataHash": "",
       },
     },
     "trackedStaticQueryResults": Map {},
+    "unsafeBuiltinWasUsedInSSR": false,
   },
   "jobsV2": Object {
     "complete": Map {},
